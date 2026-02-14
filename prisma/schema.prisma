@@ -8,44 +8,56 @@ datasource db {
 }
 
 model Recette {
-  id                     Int        @id @default(autoincrement())
-  nom                    String
-  typeDePlat             String
-  description            String?
-  nombreDePortions       Int
-  tempsPreparationMin    Int
-  instructions           String?
-  coutTotal              Float?
-  coutParPortion         Float?
-  prixVenteSuggere       Float?
-  margeBrute             Float?
-  rentabilite            String?
-  dateCreation           DateTime   @default(now())
-  dateModification       DateTime   @updatedAt
+  id                Int       @id @default(autoincrement())
+  nom               String
+  typePlat          String
+  description       String?
 
-  ingredients            IngredientRecette[]
+  portions          Int
+  tempsPreparation  Int
+
+  instructions      String?
+
+  coutTotal         Float?
+  prixVente         Float?
+  margeBrute        Float?
+  tauxRentabilite   Float?
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  ingredients       IngredientRecette[]
+
+  @@index([nom])
 }
 
 model Ingredient {
-  id                Int      @id @default(autoincrement())
-  nom               String
-  uniteMesure       String
-  prixUnitaire      Float
-  categorie         String?
-  stockDisponible   Float?
+  id              Int       @id @default(autoincrement())
+  nom             String    @unique
+  unite           String
+  prixUnitaire    Float
+  categorie       String?
+  stockDisponible Float?
 
-  recettes          IngredientRecette[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  recettes        IngredientRecette[]
+
+  @@index([categorie])
 }
 
 model IngredientRecette {
-  id              Int        @id @default(autoincrement())
+  id            Int        @id @default(autoincrement())
 
-  recette         Recette    @relation(fields: [recetteId], references: [id])
-  recetteId       Int
+  recette       Recette    @relation(fields: [recetteId], references: [id], onDelete: Cascade)
+  recetteId     Int
 
-  ingredient      Ingredient @relation(fields: [ingredientId], references: [id])
-  ingredientId    Int
+  ingredient    Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  ingredientId  Int
 
-  quantite        Float
-  coutCalcule     Float?
+  quantite      Float
+  coutCalcule   Float?
+
+  @@unique([recetteId, ingredientId])
 }
