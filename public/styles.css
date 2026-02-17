@@ -1,0 +1,70 @@
+:root {
+  --bg: #111215;
+  --bg-elev: #191b20;
+  --text: #f3edd7;
+  --gold: #d4af37;
+  --gold-soft: #a8872a;
+  --line: #2f2a1b;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+.container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px;
+}
+h1, h2 { color: var(--gold); }
+.card {
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+input, textarea, button {
+  background: #0f1013;
+  color: var(--text);
+  border: 1px solid #3f3720;
+  border-radius: 8px;
+  padding: 10px;
+}
+button {
+  cursor: pointer;
+  border-color: var(--gold);
+  color: var(--gold);
+  font-weight: 700;
+}
+button:hover {
+  background: #251f10;
+}
+.recette {
+  border: 1px solid #3a311d;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.meta {
+  color: #d3c79d;
+  font-size: 0.92rem;
+}
+pre {
+  white-space: pre-wrap;
+  margin: 8px 0 0;
+}

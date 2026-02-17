@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recette & Technique</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Recette & Technique</h1>
+        <p>Capture rapide en service, fiche technique propre pour la mise en place.</p>
+      </header>
+
+      <section class="card">
+        <h2>Saisie rapide</h2>
+        <form id="quick-form">
+          <div class="grid">
+            <label>Nom
+              <input name="nom" required placeholder="Ex: Jus de volaille corsé" />
+            </label>
+            <label>Type
+              <input name="typePlat" required placeholder="Sauce, garniture, entrée..." />
+            </label>
+            <label>Portions
+              <input name="portions" type="number" min="1" value="1" />
+            </label>
+            <label>Temps (min)
+              <input name="tempsPreparation" type="number" min="0" value="0" />
+            </label>
+          </div>
+          <label>Note brute
+            <textarea name="note" rows="5" required placeholder="Saisis vite: ingrédients, étapes, points de vigilance..."></textarea>
+          </label>
+          <button type="submit">Enregistrer</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Fiches enregistrées</h2>
+        <div id="recettes"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
