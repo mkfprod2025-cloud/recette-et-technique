@@ -1,23 +1,18 @@
 # Recette & Technique
 
-Application orientée cuisine pro pour:
-- écrire très vite des recettes pendant test/service,
-- retrouver ensuite une fiche technique claire pour la mise en place,
-- travailler en thème sombre contrasté doré.
+Mini application pour:
+- prendre des notes très vite pendant un test/service,
+- retrouver les notes en fiches techniques simples pour la mise en place,
+- utiliser une interface sombre à contraste doré.
 
-## Important (capture écran corrigée)
-Si le site affichait une page Markdown (README), c'était un problème de page d'entrée.
-Cette version ajoute un `index.html` à la racine qui ouvre directement l'application.
+## État actuel
+- API Express + Prisma (SQLite).
+- Saisie rapide (`nom`, `type`, `portions`, `temps`, `note brute`).
+- Liste des fiches enregistrées.
+- Endpoint fiche détaillée (`/api/recettes/:id/fiche`) avec calcul de coût ingrédients (si ingrédients liés).
+- UI sombre + accents dorés.
 
-## Fonctionnalités
-- Saisie express (nom, type, portions, temps, prix vente optionnel, note brute).
-- Liste + recherche recettes.
-- Fiche technique: instructions, coût, marge, rentabilité, ingrédients.
-- Impression de fiche.
-- Raccourci `Ctrl+Entrée`.
-- **Fallback local**: si l'API est indisponible (ex: hébergement statique), l'app passe en mode localStorage.
-
-## Démarrage local (avec API)
+## Démarrage
 ```bash
 npm install
 cp .env.example .env
@@ -27,7 +22,12 @@ npm run dev
 
 Puis ouvrir `http://localhost:3000`.
 
-## Démarrage statique (sans API)
-Ouvrir `index.html` (ou publier le repo en pages statiques):
-- l'app reste utilisable,
-- les données sont sauvegardées localement dans le navigateur.
+## Scripts
+- `npm run dev` : démarre le serveur
+- `npm run db:push` : pousse le schéma Prisma vers SQLite
+- `npm run migrate` : migration Prisma nommée
+
+## Prochaine étape recommandée
+- Ajouter une vue "Mise en place" (checklist/quantités par poste).
+- Structurer la note brute en sections (ingrédients, étapes, points critiques).
+- Ajouter un mode "gants" (grosses zones tactiles + raccourcis clavier).
