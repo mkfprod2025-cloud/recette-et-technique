@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "node src/server.js",
-    "migrate": "prisma migrate dev --name init"
+    "migrate": "prisma migrate dev --name init",
+    "db:push": "prisma db push"
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",

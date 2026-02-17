@@ -1,0 +1,135 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171b22;
+  --text: #f5efdb;
+  --gold: #d6b35a;
+  --gold-strong: #f0c86c;
+  --line: #3e3420;
+  --muted: #ccb98d;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: radial-gradient(circle at top, #151923 0%, var(--bg) 40%);
+  color: var(--text);
+}
+
+.layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+.topbar h1 { margin: 0; color: var(--gold-strong); }
+.topbar p { margin: 4px 0 0; color: var(--muted); }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+h2 { color: var(--gold); margin: 0 0 12px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+input, textarea, button {
+  color: var(--text);
+  background: #10131a;
+  border: 1px solid #4c4028;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+textarea { resize: vertical; }
+
+button {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--gold-strong);
+  border-color: var(--gold);
+}
+
+button:hover { background: #2a2314; }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hint, .meta { color: var(--muted); font-size: 0.9rem; }
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+#list {
+  display: grid;
+  gap: 8px;
+}
+
+.recette-item {
+  width: 100%;
+  text-align: left;
+  background: #11151c;
+}
+
+.fiche-empty {
+  color: var(--muted);
+}
+
+.fiche h3 { margin-top: 0; color: var(--gold-strong); }
+.fiche pre {
+  white-space: pre-wrap;
+  margin: 0;
+  background: #10131a;
+  border: 1px solid #3f3422;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.kpi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.kpi div {
+  background: #12161d;
+  border: 1px solid #3f3422;
+  border-radius: 8px;
+  padding: 8px;
+}
+
+ul {
+  margin: 8px 0;
+  padding-left: 18px;
+}
+
+@media print {
+  body { background: white; color: #111; }
+  .topbar, #quick-form, #search, #list, #print-btn { display: none !important; }
+  .panel { border: none; box-shadow: none; }
+}
