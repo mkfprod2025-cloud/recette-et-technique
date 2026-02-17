@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Toque de chef jaune">
+  <rect width="256" height="256" rx="48" fill="#111215"/>
+  <path fill="#d4af37" d="M180 96c0-18-13-32-30-32-8 0-15 3-20 8-5-5-12-8-20-8-17 0-30 14-30 32 0 7 2 14 6 19h88c4-5 6-12 6-19Zm-94 31h84v23H86z"/>
+  <rect x="92" y="150" width="72" height="44" rx="10" fill="#d4af37"/>
+</svg>

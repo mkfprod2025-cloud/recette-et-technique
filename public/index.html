@@ -4,13 +4,32 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recette & Technique</title>
-    <link rel="stylesheet" href="/styles.css" />
+    <meta name="description" content="Saisie rapide de fiches techniques, coûts matières et recherche par recette ou ingrédient." />
+    <meta name="theme-color" content="#111215" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Recette & Technique" />
+    <meta property="og:description" content="Capture rapide, fiches techniques, coût marchandise à jour." />
+    <meta property="og:image" content="./logo-chef.svg" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Recette & Technique" />
+    <meta name="twitter:description" content="Capture rapide, fiches techniques, coût marchandise à jour." />
+    <meta name="twitter:image" content="./logo-chef.svg" />
+
+    <link rel="icon" type="image/svg+xml" href="./logo-chef.svg" />
+    <link rel="apple-touch-icon" href="./logo-chef.svg" />
+    <link rel="shortcut icon" href="./logo-chef.svg" />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <main class="container">
-      <header>
-        <h1>Recette & Technique</h1>
-        <p>Capture rapide en service, fiche technique propre pour la mise en place.</p>
+      <header class="app-header">
+        <img src="./logo-chef.svg" alt="Logo toque de chef" class="logo" />
+        <div>
+          <h1>Recette & Technique</h1>
+          <p>Capture rapide en service, fiche technique propre pour la mise en place.</p>
+        </div>
       </header>
 
       <section class="card">
@@ -30,8 +49,16 @@
               <input name="tempsPreparation" type="number" min="0" value="0" />
             </label>
           </div>
+
+          <fieldset class="ingredients-box">
+            <legend>Ingrédients (un par un)</legend>
+            <div id="ingredients-list"></div>
+            <button type="button" id="add-ingredient" class="secondary">+ Ajouter un ingrédient</button>
+            <p class="hint">Ces ingrédients seront réutilisables en tags pour la recherche.</p>
+          </fieldset>
+
           <label>Note brute
-            <textarea name="note" rows="5" required placeholder="Saisis vite: ingrédients, étapes, points de vigilance..."></textarea>
+            <textarea name="note" rows="5" required placeholder="Saisis vite: étapes, points de vigilance, dressage..."></textarea>
           </label>
           <button type="submit">Enregistrer</button>
         </form>
@@ -39,10 +66,50 @@
 
       <section class="card">
         <h2>Fiches enregistrées</h2>
+        <div class="filters">
+          <label>Recherche par
+            <select id="search-mode">
+              <option value="recette">Recette</option>
+              <option value="ingredient">Ingrédient</option>
+            </select>
+          </label>
+          <label>Recherche
+            <input id="search-input" placeholder="Ex: volaille, jus, garniture..." />
+          </label>
+        </div>
         <div id="recettes"></div>
       </section>
+
+      <section class="card">
+        <h2>Mise à jour prix matière première</h2>
+        <form id="price-form" class="grid">
+          <label>Produit
+            <input name="nom" required placeholder="Ex: Beurre" />
+          </label>
+          <label>Unité
+            <input name="unite" required placeholder="kg, L, pièce..." value="kg" />
+          </label>
+          <label>Prix unitaire
+            <input name="prixUnitaire" required type="number" min="0" step="0.01" placeholder="0.00" />
+          </label>
+          <button type="submit">Enregistrer / Mettre à jour</button>
+        </form>
+        <div id="ingredients-prix"></div>
+      </section>
+
+      <p id="sync-help" class="hint"></p>
     </main>
 
-    <script src="/app.js"></script>
+    <template id="ingredient-row-template">
+      <div class="ingredient-row">
+        <input data-field="nom" placeholder="Ingrédient" list="ingredient-tags" />
+        <input data-field="quantite" type="number" min="0" step="0.001" placeholder="Qté" />
+        <input data-field="unite" placeholder="Unité" value="kg" />
+        <button type="button" class="secondary" data-remove>Suppr.</button>
+      </div>
+    </template>
+    <datalist id="ingredient-tags"></datalist>
+
+    <script src="./app.js"></script>
   </body>
 </html>

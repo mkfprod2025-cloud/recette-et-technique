@@ -11,12 +11,25 @@ const __dirname = path.dirname(__filename)
 app.use(express.json())
 app.use(express.static(path.join(__dirname, "../public")))
 
+function buildRecetteWithCosts(recette) {
+  const ingredients = recette.ingredients ?? []
+  const coutIngredients = ingredients.reduce(
+    (sum, item) => sum + item.quantite * (item.ingredient?.prixUnitaire ?? 0),
+    0,
+  )
+
+  return {
+    ...recette,
+    coutIngredients,
+  }
+}
+
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" })
 })
 
 app.post("/api/recettes/quick", async (req, res) => {
-  const { nom, typePlat, note, portions, tempsPreparation } = req.body
+  const { nom, typePlat, note, portions, tempsPreparation, ingredients = [] } = req.body
 
   if (!nom || !typePlat || !note) {
     return res.status(400).json({ error: "nom, typePlat et note sont obligatoires" })
@@ -33,7 +46,96 @@ app.post("/api/recettes/quick", async (req, res) => {
     },
   })
 
+  const cleanIngredients = Array.isArray(ingredients)
+    ? ingredients
+        .filter((item) => item?.nom)
+        .map((item) => ({
+          nom: String(item.nom).trim(),
+          unite: String(item.unite || "kg").trim() || "kg",
+          quantite: Number(item.quantite) > 0 ? Number(item.quantite) : 0,
+        }))
+    : []
+
+  for (const item of cleanIngredients) {
+    const ingredient = await prisma.ingredient.upsert({
+      where: { nom: item.nom },
+      update: { unite: item.unite || "kg" },
+      create: {
+        nom: item.nom,
+        unite: item.unite || "kg",
+        prixUnitaire: 0,
+      },
+    })
+
+    await prisma.ingredientRecette.upsert({
+      where: {
+        recetteId_ingredientId: {
+          recetteId: recette.id,
+          ingredientId: ingredient.id,
+        },
+      },
+      update: { quantite: item.quantite },
+      create: {
+        recetteId: recette.id,
+        ingredientId: ingredient.id,
+        quantite: item.quantite,
+      },
+    })
+  }
+
   res.status(201).json(recette)
+})
+
+app.get("/api/ingredients", async (req, res) => {
+  const ingredients = await prisma.ingredient.findMany({
+    orderBy: [{ nom: "asc" }],
+  })
+
+  res.json(ingredients)
+})
+
+app.post("/api/ingredients/upsert", async (req, res) => {
+  const { nom, unite, prixUnitaire } = req.body
+
+  if (!nom || !unite || Number(prixUnitaire) < 0) {
+    return res.status(400).json({ error: "nom, unite et prixUnitaire sont obligatoires" })
+  }
+
+  const ingredient = await prisma.ingredient.upsert({
+    where: { nom: String(nom).trim() },
+    update: {
+      unite: String(unite).trim(),
+      prixUnitaire: Number(prixUnitaire),
+    },
+    create: {
+      nom: String(nom).trim(),
+      unite: String(unite).trim(),
+      prixUnitaire: Number(prixUnitaire),
+    },
+  })
+
+  res.status(201).json(ingredient)
+})
+
+app.patch("/api/ingredients/:id", async (req, res) => {
+  const id = Number(req.params.id)
+
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: "id invalide" })
+  }
+
+  const { nom, unite, prixUnitaire } = req.body
+
+  const ingredient = await prisma.ingredient.update({
+    where: { id },
+    data: {
+      nom: String(nom).trim(),
+      unite: String(unite).trim(),
+      prixUnitaire: Number(prixUnitaire),
+    },
+  })
+
+  res.json(ingredient)
 })
 
 app.get("/api/recettes", async (req, res) => {
@@ -48,7 +150,7 @@ app.get("/api/recettes", async (req, res) => {
     },
   })
 
-  res.json(recettes)
+  res.json(recettes.map(buildRecetteWithCosts))
 })
 
 app.get("/api/recettes/:id/fiche", async (req, res) => {
@@ -73,22 +175,19 @@ app.get("/api/recettes/:id/fiche", async (req, res) => {
     return res.status(404).json({ error: "Recette non trouvée" })
   }
 
-  const coutIngredients = recette.ingredients.reduce(
-    (sum, item) => sum + item.quantite * item.ingredient.prixUnitaire,
-    0,
-  )
+  const withCosts = buildRecetteWithCosts(recette)
 
   const fiche = {
-    id: recette.id,
-    nom: recette.nom,
-    typePlat: recette.typePlat,
-    portions: recette.portions,
-    tempsPreparation: recette.tempsPreparation,
-    description: recette.description,
-    instructions: recette.instructions,
-    coutIngredients,
-    createdAt: recette.createdAt,
-    ingredients: recette.ingredients.map((item) => ({
+    id: withCosts.id,
+    nom: withCosts.nom,
+    typePlat: withCosts.typePlat,
+    portions: withCosts.portions,
+    tempsPreparation: withCosts.tempsPreparation,
+    description: withCosts.description,
+    instructions: withCosts.instructions,
+    coutIngredients: withCosts.coutIngredients,
+    createdAt: withCosts.createdAt,
+    ingredients: withCosts.ingredients.map((item) => ({
       nom: item.ingredient.nom,
       quantite: item.quantite,
       unite: item.ingredient.unite,
