@@ -7,44 +7,29 @@ const app = express()
 const prisma = new PrismaClient()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const rootDir = path.join(__dirname, "..")
-const publicDir = path.join(rootDir, "public")
 
 app.use(express.json())
-app.use(express.static(rootDir))
-app.use("/public", express.static(publicDir))
-
-function parseSteps(note) {
-  return note
-    .split(/\n+/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-}
+app.use(express.static(path.join(__dirname, "../public")))
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" })
 })
 
 app.post("/api/recettes/quick", async (req, res) => {
-  const { nom, typePlat, note, portions, tempsPreparation, prixVente } = req.body
+  const { nom, typePlat, note, portions, tempsPreparation } = req.body
 
-  if (!nom?.trim() || !typePlat?.trim() || !note?.trim()) {
+  if (!nom || !typePlat || !note) {
     return res.status(400).json({ error: "nom, typePlat et note sont obligatoires" })
   }
-
-  const cleanPortions = Number(portions) > 0 ? Number(portions) : 1
-  const cleanTemps = Number(tempsPreparation) >= 0 ? Number(tempsPreparation) : 0
-  const cleanPrixVente = Number(prixVente) > 0 ? Number(prixVente) : null
 
   const recette = await prisma.recette.create({
     data: {
       nom: nom.trim(),
       typePlat: typePlat.trim(),
       description: note.trim(),
-      instructions: parseSteps(note).join("\n"),
-      portions: cleanPortions,
-      tempsPreparation: cleanTemps,
-      prixVente: cleanPrixVente,
+      instructions: note.trim(),
+      portions: Number(portions) > 0 ? Number(portions) : 1,
+      tempsPreparation: Number(tempsPreparation) >= 0 ? Number(tempsPreparation) : 0,
     },
   })
 
@@ -52,25 +37,14 @@ app.post("/api/recettes/quick", async (req, res) => {
 })
 
 app.get("/api/recettes", async (req, res) => {
-  const search = req.query.search?.toString().trim()
   const recettes = await prisma.recette.findMany({
-    where: search
-      ? {
-          OR: [
-            { nom: { contains: search } },
-            { typePlat: { contains: search } },
-            { description: { contains: search } },
-          ],
-        }
-      : undefined,
     orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      nom: true,
-      typePlat: true,
-      portions: true,
-      tempsPreparation: true,
-      createdAt: true,
+    include: {
+      ingredients: {
+        include: {
+          ingredient: true,
+        },
+      },
     },
   })
 
@@ -99,42 +73,34 @@ app.get("/api/recettes/:id/fiche", async (req, res) => {
     return res.status(404).json({ error: "Recette non trouvée" })
   }
 
-  const ingredients = recette.ingredients.map((item) => {
-    const coutLigne = item.quantite * item.ingredient.prixUnitaire
-    return {
-      nom: item.ingredient.nom,
-      quantite: item.quantite,
-      unite: item.ingredient.unite,
-      prixUnitaire: item.ingredient.prixUnitaire,
-      coutLigne,
-    }
-  })
+  const coutIngredients = recette.ingredients.reduce(
+    (sum, item) => sum + item.quantite * item.ingredient.prixUnitaire,
+    0,
+  )
 
-  const coutIngredients = ingredients.reduce((sum, line) => sum + line.coutLigne, 0)
-  const coutTotal = recette.coutTotal ?? coutIngredients
-  const prixVente = recette.prixVente ?? null
-  const margeBrute = prixVente ? prixVente - coutTotal : null
-  const tauxRentabilite = prixVente ? (margeBrute / prixVente) * 100 : null
-
-  res.json({
+  const fiche = {
     id: recette.id,
     nom: recette.nom,
     typePlat: recette.typePlat,
     portions: recette.portions,
     tempsPreparation: recette.tempsPreparation,
-    noteBrute: recette.description,
+    description: recette.description,
     instructions: recette.instructions,
+    coutIngredients,
     createdAt: recette.createdAt,
-    coutTotal,
-    prixVente,
-    margeBrute,
-    tauxRentabilite,
-    ingredients,
-  })
+    ingredients: recette.ingredients.map((item) => ({
+      nom: item.ingredient.nom,
+      quantite: item.quantite,
+      unite: item.ingredient.unite,
+      coutLigne: item.quantite * item.ingredient.prixUnitaire,
+    })),
+  }
+
+  res.json(fiche)
 })
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(rootDir, "index.html"))
+  res.sendFile(path.join(__dirname, "../public/index.html"))
 })
 
 app.listen(3000, () => {
