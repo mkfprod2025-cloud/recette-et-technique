@@ -5,6 +5,7 @@
   --gold: #d4af37;
   --gold-soft: #a8872a;
   --line: #2f2a1b;
+  --danger: #d96868;
 }
 
 * { box-sizing: border-box; }
@@ -15,44 +16,76 @@ body {
   color: var(--text);
 }
 .container {
-  max-width: 980px;
+  width: min(100%, 980px);
   margin: 0 auto;
-  padding: 24px;
+  padding: 14px;
 }
-h1, h2 { color: var(--gold); }
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.logo {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+}
+h1, h2, h3 { color: var(--gold); margin-top: 0; }
+p { margin-top: 0; }
 .card {
   background: var(--bg-elev);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 12px;
+  margin-bottom: 12px;
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 label {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
-input, textarea, button {
+input, textarea, button, select {
   background: #0f1013;
   color: var(--text);
   border: 1px solid #3f3720;
   border-radius: 8px;
   padding: 10px;
+  font: inherit;
 }
 button {
   cursor: pointer;
   border-color: var(--gold);
   color: var(--gold);
   font-weight: 700;
+  min-height: 42px;
 }
-button:hover {
-  background: #251f10;
+button:hover { background: #251f10; }
+button.secondary {
+  border-color: #3f3720;
+  color: #d3c79d;
+}
+.ingredients-box {
+  border: 1px solid #3a311d;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.ingredients-box legend {
+  color: var(--gold);
+  padding: 0 6px;
+}
+.ingredient-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 .recette {
   border: 1px solid #3a311d;
@@ -64,7 +97,54 @@ button:hover {
   color: #d3c79d;
   font-size: 0.92rem;
 }
-pre {
-  white-space: pre-wrap;
-  margin: 8px 0 0;
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+.tag {
+  border: 1px solid #544523;
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 0.84rem;
+  color: #e8d9a9;
+}
+.total {
+  margin-top: 8px;
+  font-weight: 700;
+  color: #f0d374;
+}
+.filters {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.hint {
+  color: #c1b68b;
+  font-size: 0.9rem;
+  margin: 4px 0 0;
+}
+.price-item {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  border: 1px solid #3a311d;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+@media (min-width: 700px) {
+  .container { padding: 24px; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filters { grid-template-columns: 180px 1fr; align-items: end; }
+  .ingredient-row {
+    grid-template-columns: 1.4fr 0.7fr 0.7fr auto;
+    align-items: end;
+  }
+  .price-item {
+    grid-template-columns: 1.4fr 0.7fr 0.7fr auto;
+    align-items: end;
+  }
 }
