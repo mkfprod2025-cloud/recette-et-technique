@@ -27,6 +27,7 @@ model Recette {
   updatedAt         DateTime  @updatedAt
 
   ingredients       IngredientRecette[]
+  tags              RecetteTag[]
 
   @@index([nom])
 }
@@ -43,8 +44,40 @@ model Ingredient {
   updatedAt       DateTime  @updatedAt
 
   recettes        IngredientRecette[]
+  tags            IngredientTag[]
 
   @@index([categorie])
+}
+
+model Tag {
+  id          Int             @id @default(autoincrement())
+  label       String          @unique
+  createdAt   DateTime        @default(now())
+
+  recettes    RecetteTag[]
+  ingredients IngredientTag[]
+
+  @@index([label])
+}
+
+model RecetteTag {
+  id        Int      @id @default(autoincrement())
+  recette   Recette  @relation(fields: [recetteId], references: [id], onDelete: Cascade)
+  recetteId Int
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId     Int
+
+  @@unique([recetteId, tagId])
+}
+
+model IngredientTag {
+  id           Int        @id @default(autoincrement())
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  ingredientId Int
+  tag          Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId        Int
+
+  @@unique([ingredientId, tagId])
 }
 
 model IngredientRecette {
