@@ -14,11 +14,17 @@
       </header>
 
       <section class="card">
+        <h2>Sauvegarde Drive</h2>
+        <p id="drive-config">Chargement de la configuration...</p>
+        <a class="button" href="/api/recettes/export/sheet">Télécharger l'export Sheet (CSV)</a>
+      </section>
+
+      <section class="card">
         <h2>Saisie rapide</h2>
         <form id="quick-form">
           <div class="grid">
             <label>Nom
-              <input name="nom" required placeholder="Ex: Jus de volaille corsé" />
+              <input name="nom" required placeholder="Ex: Tartine campagnarde" />
             </label>
             <label>Type
               <input name="typePlat" required placeholder="Sauce, garniture, entrée..." />
@@ -30,6 +36,9 @@
               <input name="tempsPreparation" type="number" min="0" value="0" />
             </label>
           </div>
+          <label>Tags (ingrédients / produit transformé)
+            <input name="tags" placeholder="Ex: jambon, poulet, tartine, campagnarde" />
+          </label>
           <label>Note brute
             <textarea name="note" rows="5" required placeholder="Saisis vite: ingrédients, étapes, points de vigilance..."></textarea>
           </label>
@@ -39,6 +48,10 @@
 
       <section class="card">
         <h2>Fiches enregistrées</h2>
+        <div class="search-bar">
+          <input id="search-input" placeholder="Rechercher par ingrédient, tag ou nom produit..." />
+          <button id="search-button" type="button">Rechercher</button>
+        </div>
         <div id="recettes"></div>
       </section>
     </main>
